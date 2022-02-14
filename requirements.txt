@@ -1,0 +1,4 @@
+# Main requirements
+Django >= 4.0
+django-dotenv >= 1.4.2
+djangorestframework >= 3.13.1
