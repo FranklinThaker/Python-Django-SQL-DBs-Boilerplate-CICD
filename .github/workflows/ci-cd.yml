@@ -6,16 +6,48 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  DB_HOST : localhost
+  DB_NAME : test
+  DB_USER : postgres
+  DB_PASSWORD : postgres
+  DJANGO_SECRET_KEY : ${{secrets.ENCRYPTION_KEY}}
+  DEBUG : True
+
 jobs:
   build:
-
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_USER: ${DB_USER}
+          POSTGRES_PASSWORD: ${DB_PASSWORD}
+          POSTGRES_DB: ${DB_NAME}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     strategy:
       max-parallel: 4
       matrix:
         python-version: [3.10.2]
 
     steps:
+    - run: |
+        touch .env
+        echo "DB_HOST=${DB_HOST}" >> .env
+        echo "DB_NAME=${DB_NAME}" >> .env
+        echo "DB_USER=${DB_USER}" >> .env
+        echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
+        echo "DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}" >> .env
+        echo "DEBUG=${DEBUG}" >> .env
+
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
