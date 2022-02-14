@@ -20,7 +20,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:12
+        image: postgres:latest
         env:
           POSTGRES_USER: ${DB_USER}
           POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -47,6 +47,7 @@ jobs:
         echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
         echo "DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}" >> .env
         echo "DEBUG=${DEBUG}" >> .env
+        cat .env
 
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
